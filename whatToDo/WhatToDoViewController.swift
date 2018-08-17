@@ -11,10 +11,18 @@ import UIKit
 class WhatToDoViewController: UITableViewController {
     
     var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
-
+    
+    // User's defaults Database
+    let defaults = UserDefaults.standard
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
     }
 
 
@@ -64,9 +72,12 @@ class WhatToDoViewController: UITableViewController {
             
             if textField.text != "" {
                 self.itemArray.append(textField.text!)
+                self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+                self.tableView.reloadData()
             }
             
-            self.tableView.reloadData()
+            
+            
         }
         
         alert.addTextField { (alertTextField) in
