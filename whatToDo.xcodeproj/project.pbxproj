@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB3A7701212754920061ACF8 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3A7700212754920061ACF8 /* Item.swift */; };
 		CB7403AF2125E787007358C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7403AE2125E787007358C2 /* AppDelegate.swift */; };
 		CB7403B12125E787007358C2 /* WhatToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7403B02125E787007358C2 /* WhatToDoViewController.swift */; };
 		CB7403B42125E787007358C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CB7403B22125E787007358C2 /* Main.storyboard */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB3A7700212754920061ACF8 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		CB7403AB2125E787007358C2 /* whatToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = whatToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7403AE2125E787007358C2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CB7403B02125E787007358C2 /* WhatToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatToDoViewController.swift; sourceTree = "<group>"; };
@@ -35,6 +37,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CB3A7702212754A00061ACF8 /* Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				CB3A7700212754920061ACF8 /* Item.swift */,
+			);
+			path = "Data Model";
+			sourceTree = "<group>";
+		};
+		CB3A7703212754FA0061ACF8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CB7403B22125E787007358C2 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		CB3A7704212755040061ACF8 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				CB7403B02125E787007358C2 /* WhatToDoViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		CB3A77052127550F0061ACF8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CB7403B52125E78A007358C2 /* Assets.xcassets */,
+				CB7403B72125E78A007358C2 /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		CB7403A22125E787007358C2 = {
 			isa = PBXGroup;
 			children = (
@@ -54,12 +89,12 @@
 		CB7403AD2125E787007358C2 /* whatToDo */ = {
 			isa = PBXGroup;
 			children = (
-				CB7403AE2125E787007358C2 /* AppDelegate.swift */,
-				CB7403B02125E787007358C2 /* WhatToDoViewController.swift */,
-				CB7403B22125E787007358C2 /* Main.storyboard */,
-				CB7403B52125E78A007358C2 /* Assets.xcassets */,
-				CB7403B72125E78A007358C2 /* LaunchScreen.storyboard */,
 				CB7403BA2125E78A007358C2 /* Info.plist */,
+				CB7403AE2125E787007358C2 /* AppDelegate.swift */,
+				CB3A7704212755040061ACF8 /* Controller */,
+				CB3A7702212754A00061ACF8 /* Data Model */,
+				CB3A7703212754FA0061ACF8 /* View */,
+				CB3A77052127550F0061ACF8 /* Supporting Files */,
 			);
 			path = whatToDo;
 			sourceTree = "<group>";
@@ -136,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7403B12125E787007358C2 /* WhatToDoViewController.swift in Sources */,
+				CB3A7701212754920061ACF8 /* Item.swift in Sources */,
 				CB7403AF2125E787007358C2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

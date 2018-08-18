@@ -10,19 +10,26 @@ import UIKit
 
 class WhatToDoViewController: UITableViewController {
     
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
+    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     // User's defaults Database
-    let defaults = UserDefaults.standard
+    // let defaults = UserDefaults.standard
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-            itemArray = items
-        }
+        
+        loadData()
+        print(dataFilePath!)
+        
+        
+//        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+//            itemArray = items
+//        }
     }
 
 
@@ -35,7 +42,16 @@ class WhatToDoViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let currentItem = itemArray[indexPath.row]
+        
+        cell.textLabel?.text = currentItem.title
+        
+        if currentItem.done == true {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+
         return cell
         
     }
@@ -44,14 +60,10 @@ class WhatToDoViewController: UITableViewController {
     
     // Get the selected Row
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArray[indexPath.row])
-        
-        // Check if there is any checkmark, if not then add a checkmark when selected
-        if (tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+       // print(itemArray[indexPath.row])
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        saveItems()
+        tableView.reloadData()
         
         // Deselect row with animation
         tableView.deselectRow(at: indexPath, animated: true)
@@ -71,14 +83,18 @@ class WhatToDoViewController: UITableViewController {
             print("added!")
             
             if textField.text != "" {
-                self.itemArray.append(textField.text!)
-                self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+                let newItem = Item()
+                newItem.title = textField.text!
+                self.itemArray.append(newItem)
+                
+                self.saveItems()
+                
                 self.tableView.reloadData()
             }
             
-            
-            
         }
+        
+  
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "What's the plan?"
@@ -88,6 +104,30 @@ class WhatToDoViewController: UITableViewController {
         alert.addAction(action)
         present(alert,animated: true, completion: nil)
     }
-
+    
+    // self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+    
+    func saveItems() {
+        
+        do {
+            let encoder = PropertyListEncoder()
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            
+            print("Error encoding Data: \(error)")
+        }
+    }
+    
+    func loadData(){
+        do{
+     let data = try Data(contentsOf: dataFilePath!)
+            let decoder = PropertyListDecoder()
+            itemArray = try decoder.decode([Item].self, from: data)
+            
+        } catch{
+            print("Error decoding data: \(error)")
+        }
+    }
     
 }
