@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class WhatToDoViewController: UITableViewController {
+class WhatToDoViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -21,30 +22,44 @@ class WhatToDoViewController: UITableViewController {
         }
     }
     
-//    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-    
-    // User's defaults Database
-    // let defaults = UserDefaults.standard
-    
+    @IBOutlet weak var searchBar: UISearchBar!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        
         // Do any additional setup after loading the view, typically from a nib.
-        
-        
-        loadData()
-        
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
-        
-//        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-//            itemArray = items
-//        }
+            loadData()
     }
 
 
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory?.name
+        
+        
+        guard let colorHex = selectedCategory?.bgcolor else {fatalError()}
+        
+        updateNavBar(withHexCode: colorHex)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        updateNavBar(withHexCode: "1D9BF6")
+    }
+    
+    
+    func updateNavBar(withHexCode colorHex: String){
+        
+        guard let navbar = navigationController?.navigationBar else {fatalError()}
+        guard let navbarcolor = UIColor(hexString: colorHex) else {fatalError()}
+        
+        navbar.barTintColor = navbarcolor
+        navbar.tintColor = ContrastColorOf(navbarcolor, returnFlat: true)
+        navbar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: ContrastColorOf(navbarcolor, returnFlat: true)]
+        
+        searchBar.barTintColor = navbarcolor
+    }
+    
+    
     //MARK: - Tableview DataSource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -52,17 +67,25 @@ class WhatToDoViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let currentItem = todoItems?[indexPath.row]{
             
             cell.textLabel?.text = currentItem.title
+            
+            if let color = UIColor(hexString: selectedCategory!.bgcolor)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(todoItems!.count)){
+                
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
             
             if currentItem.done == true {
                 cell.accessoryType = .checkmark
             } else {
                 cell.accessoryType = .none
             }
+            
+            //cell.backgroundColor = UIColor(hexString: selectedCategory!.bgcolor)
         } else {
             cell.textLabel?.text = "No Items Added"
         }
@@ -138,26 +161,28 @@ class WhatToDoViewController: UITableViewController {
         present(alert,animated: true, completion: nil)
     }
     
-    // self.defaults.set(self.itemArray, forKey: "ToDoListArray")
-    
-//    func saveItems(item: Item) {
-//
-//        do {
-//            try realm.write {
-//                realm.add(item)
-//            }
-//        } catch {
-//            print("Error Saving Realm: \(error)")
-//        }
-//
-//        tableView.reloadData()
-//    }
-//
+
     func loadData(){
 
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
         }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        if let currentItem = todoItems?[indexPath.row] {
+            
+            do{
+                try realm.write {
+                    realm.delete(currentItem)
+                }
+            } catch {
+                print("Error deleting item:\(error)")
+            }
+        }
+        }
+        
+        
     
 }
 
@@ -176,13 +201,6 @@ extension WhatToDoViewController : UISearchBarDelegate{
             }
         }
         
-        
-        
-//        let request: NSFetchRequest<Item> = Item.fetchRequest()
-//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//        loadData(with: request,predicate: predicate)
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
